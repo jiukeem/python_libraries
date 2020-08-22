@@ -1,0 +1,146 @@
+-맷플롯립 라이브러리 불러오기 from matplotlib import pyplot as plt
+
+line plots(기본적인 라인그래프)
+-기본 형식은 다음과 같다.
+plt.plot(x_values, y_values)
+plt.show()
+x와 y에 리스트를 넣으면 알아서 매치한다. plt.plot()은 그래프를 만들고 plt.show()는 실제로 그래프를 화면상에 출력한다. 
+
+-오~ plt.plot()을 같은 x_value에 대해서 다른 y_value로 두번 돌리면 알아서 그래프 한개에 두개의 라인그래프가 그려진다. 신기신기. 기본 설정으로 첫번째 라인은 파란색, 두번째 라인은 주황색이다. ㅎㅎ귀엽
+
+-color 키워드를 통해 선 색깔을 지정할 수 있다. 'green' 같은 HTML 컬러네임이나 HEX 코드를 사용한다('#AAAAAA')
+-linestyle 키워드를 통해 라인스타일을 지정할 수 있다. '--' ':' '' 가 각각 dashed, dotted, no line을 나타낸다. 귀여워...
+-marker 키워드를 통해 점 양식을 지정할 수 있다. 'o' 's' '*' 가 각각 동그라미, 네모(square), 별 모양을 나타낸다. 귀여워!!ㅠㅠㅠㅠ
+
+-plt.axis()를 통해 그래프의 원하는 부분을 확대할 수 있다. 괄호 안에는 순서대로 [x_min, x_max, y_min, y_max]를 리스트 형태로! 넣어주면 딱 그만큼 크롭해서 보여준다. 
+
+-plt.xlabel() 과 plt.ylabel()을 통해서 축 이름을 붙일 수 있다 (당연히 str 형식으로 넣어야한다.) plt.title()을 통해서 그래프의 제목을 붙일 수 있다. 
+
+-같은 x축을 가지고 있더라도 각각 따로 그래프를 만들고 싶을 수 있다. 요 그래프들을 전부 subplot이라고 하며 이걸 전부 포함해서 담고있는 애를 figure라고 부른다. figure 안에서 subplot의 레이아웃도 설정할 수 있다. 예를 들어 6개의 서브플롯을 2바이3 으로 놓을지 3바이2로 놓을지 설정할 수 있다.  plt.subplot() 을 사용한다. 세가지의 아규먼트가 필요한데 서브플롯이 들어갈 행열을 차례대로 입력, 그리고 이 서브플롯의 인덱스를 써준다. plt.subplot(2, 3, 4) 그러면 한 피규어에 서브플롯 여섯개를 넣을거면 subplot 함수를 여섯번 써야된다는거? 아 아닌가부다 1,2행렬짜리 피규어에서 얘가 몇번째인지 명시하는 것. 아니 그러면 다 따로 써야되는거맞네;_;
+plt.subplot(1, 2, 1)
+plt.plot(x, y, color='green')
+이런식으로 plt.subplot() 다음에 오는 plt.plot()은 저 서브플롯 안에 플롯한다고 한다. 즉 서즈플롯 명령어에는 x축 y축 같은 정보는 하나도 안들어있다. 위치만 지정해 주는 애다
+
+-subplot끼리 겹쳐서 y축 글씨가 안보인다거나 하지않게 .subplots_adjust()를 써서 조정할 수 있다. left, right, bottom, top, wspace, hspace 등의 키워드가 있는데 중요한건 아니니까 나중에 필요할 때 찾아쓰기
+
+- [                ]
+  [      ]  [       ]
+이런식의 서브플롯이면 각각
+plt.subplot(2,1,1)
+plt.subplot(2,2,3)
+plt.subplot(2,2,4)
+로 쓴다.... 전부 자기 중심임 웃겨증말
+
+-한 그래프에 여러개의 선을 그릴 때 plt.legend() 를 통해 범례를 붙일 수 있다. 따로 키워드 없이 플롯 순서대로 쓰면되고 괄호 안에 []대괄호로 리스트 형식으로 만들어줘야함. 그리고 loc이라는 키워드를 넣을 수 있는데 0부터 10까지의 값을 받으며 레전드의 위치를 정해줌.
+
+-레전드에 리스트 형식으로 입력하지않고 플롯 할때 x축 y축 뒤에 label 키워드를 통해 각각 범례를 붙일 수도 있다. 유의할 점은 그래도 plt.legend()는 써줘야 한다는거! (물론 괄호안에는 아무것도 안쓰겠지만)
+
+-그래프의 눈금을 수정하고 싶으면 ax라는 variable을 써야한다. 여러개의 서브플롯이 있을수도 있으므로 어떤 걸 수정할지 고르는 거라고. 플롯이 한개더라도 써야한다(그 경우 괄호 안을 비워도 됨)
+
+ax = plt.subplot(1, 1, 1)
+plt.plot([0, 1, 2, 3, 4], [0, 1, 4, 9, 16])
+plt.plot([0, 1, 2, 3, 4], [0, 1, 8, 27, 64])
+ax.set_xticks([1, 2, 4])
+그리고 ax.set_xticks()를 통해서 출력될 눈금을 수정할 수 있다. 당연히 yticks도 가능. 그리고 만약 실제 수치랑 다른 것으로 출력되게 하고 싶으면 xticklabels를 쓸 수 있다. 마찬가지로 리스트 넣어줘야함
+
+ax = plt.subplot()
+plt.plot([1, 3, 3.5], [0.1, 0.6, 0.8], 'o')
+ax.set_yticks([0.1, 0.6, 0.8])
+ax.set_yticklabels(['10%', '60%', '80%'])
+
+-심지어 plot의 x를 그대로 넣어주는 경우도 있다. 이러면 얘가 막 두칸에 한번씩 x를 표시하던게 1개씩 다 출력된다. 
+
+-새로운 피규어를 만들기 전에는 plt.close('all') 으로 기존에 만들어놨던 플롯을 전부 닫아주는게 좋다. 안그러면 'forgotten' line 들이 막 등장해버릴 수 있다고? 함 
+
+-새로운 피규어를 만들때 plt.figure() 안에 figsize 키워드를 통해 피규어의 사이즈를 정할 수 있다. ()튜플형태로 받으면 width, height 순으로 받는다. 
+
+-plt.savefig() 를 통해 피규어를 저장할 수 있다. 'str' 형태로 입력하며 png, svg, pdf 등의 파일 형식을 지원한다. 
+
+다 합하면 새로운 피규어를 만들 때 보통 이런 순서
+plt.figure(figsize = (12,8))
+ax1 = plt.subplot(1,2,1)
+plt.plot(x_values, visits_per_month, marker = 'o')
+plt.ylabel('total page visits')
+plt.xlabel('month')
+ax1.set_xticks(x_values)
+ax1.set_xticklabels(months)
+
+ax2 = plt.subplot(1,2,2)
+plt.plot(x_values, key_limes_per_month, marker = 's')
+plt.plot(x_values, persian_limes_per_month, marker = 's', color = 'green')
+plt.plot(x_values, blood_limes_per_month, marker = 's', color = 'red')
+plt.legend(['Key Lime','Persian Lime','Blood Lime'])
+ax2.set_xticks(x_values)
+ax2.set_xticklabels(months)
+
+plt.show()
+
+진짜 정보를 수정하는 코드랑 틀을 만드는 코드들이 섞여있어서 좀 헷갈릴 수 있다. 
+
+
+------------지금까지는 전부 기본적인 라인 그래프에 대한 설명---------------
+
+bar chart
+-plt.bar()을 사용한다. plt.plot()과 마찬가지로 x value 와 y value 두개를 받는다. 바 그래프의 특성 상(보통 x는 항목이름이지 특정 값이 아니니까) x value는 range(len(y_values)) 로 쓰는 경우가 많다. 그 다음에 수정해서 1,2,3... 을 x 라벨로 바꾸는 듯?
+
+-라인 그래프와 마찬가지로 set_ticks 와 set_ticklabels 를 이용해서 x 라벨을 바꿔준다. 근데 굳이 
+ax.set_xticks([0, 1, 2, 3, 4, 5, 6, 7, 8])
+요로케 꼭 해준다. default ticks won’t necessarily be one tick per bar, especially if we’re plotting a lot of bars 이기 때문에 tick 설정을 안하면 라벨링을 잘못할 수도 있다고?
+
+-라인 그래프에서는 두개를 한개의 그래프에 한번에 나타내고 싶어할 때 그냥 plt.plot()만 두번 쓰면 알아서 됐었는데 bar는 그것보단 복잡하다. x축을 숫자축으로 생각해서 각각의 바가 위치할 지점을 표시해줘야 하는데 두 개의 그래프가 같은 항목에서는 붙어있고 각각의 세트끼리는 떨어져 있어야 그래프가 예쁘게 나오겠지? 그래서 다음과 같이 x_values 를 만들어준다.
+n = 1   여러개 중 몇번째 데이터셋인지
+t = 2   총 데이터 셋의 갯수
+d = 6   한 데이터 셋에서 항목이 몇갠지
+w = 0.8  바의 너비(0.8이 디폴트 값임)
+x_values = [t*element + w*n for element in range(d)]    요로케 x_value를 설정해주면 알아서 위치잡는다. 어려운거아니고 생각해보면 바로 나옴.
+store1_x = x_values
+plt.bar(store1_x, y_value)
+
+-두개의 그래프를 옆으로 세워서 비교하는 대신 같은 항목끼리 쌓아서 보고싶을 수도 있다. 항목별 총합을 비교하는 것도 같이 할 수 있도록. 이걸 stacked bar graph라고 한다. 이건 bottom 키워드를 통해서 한다. 예를 들어 두번째 데이터에 bottom = (첫번째 데이터 y value) 로 해주면 첫번째 데이터 y value의 끝부분이 얘의 bottom이라는 얘기가 된다. 즉, 두번째꺼를 첫번째꺼 위에 올리라는 뜻을 전달하게 됨
+그리고 이렇게 할 때는 저 복잡한 x 위치 잡기도 필요없다.
+만약 여러개를 쌓을거라서 a,b위에 c를 올리고 싶다면 bottom = b 가 아니라 a+b로 해줘야 한다. 물론 이렇게 입력하면 에러나고 보통 넘파이 add를 이용해서 c_bottom = np.add(a, b)로 해준다음에 넣는다.
+
+-바 차트를 보다보면 각 항목의 맨 위에 아이빔;같은 표시가 있는 경우가 있는데 이건 각 바의 오차범위를 표시해주는 역할이다. 요걸 error bar 라고 한다. 즉 아이빔의 크기가 클수록, 요 항목의 오차범위가 크다는 얘기다. 예를 들어 +-2의 오차 범위가 있음을 알려주고 싶으면 plt.bar() 안에 yerr = 2 라는 정보를 넣어준다. capsize(위 아래 꼬다리의 크기) = 10 도 원하면 넣을 수 있다. cap이 크면 읽기가 더 쉬워지니까. 아 capsize 아규먼트 안넣어주면 그냥 소문자 L이 된다. 아예 캡이 안뜸
+
+-yerr 에는 single number이 아니라 리스트를 넣어줄 수도 있다. 각 항목마다 오차범위가 다른 경우도 있을테니까.
+ 
+-라인 그래프에도 이런 기능이 있다. plt.fill_between() 이라는 함수인데 형식은 다음과 같다. 
+x_values = range(10)
+y_values = [10, 12, 13, 13, 15, 19, 20, 22, 23, 29]
+y_lower = [8, 10, 11, 11, 13, 17, 18, 20, 21, 27]
+y_upper = [12, 14, 15, 15, 17, 21, 22, 24, 25, 31]
+
+plt.fill_between(x_values, y_lower, y_upper, alpha=0.2) #this is the shaded error
+plt.plot(x_values, y_values) #this is the line itself
+plt.show()
+이러면 라인그래프는 예전처럼 그대로 나오고 y_lower부터 y_upper까지의 범위가 칠해진다. alpha는 칠의 투명도를 조절한다. y_upper과 y_lower을 새로운 리스트로 만드는 대신 간단하게 y_value에서 2를 쁠마하고 싶을 수 있는데 list - int는 에러가 나므로 for문을 이용해서 리스트를 만들어주면 된다. 만약 넘파이를 임포트 했으면 그냥 y_value에서 2를 빼도 될 듯?
+
+-파이 차트(pie chart)를 만들어보자. 동그라미가 파이처럼 구획된 차트. 비율을 표시할 때 유용하다. plt.pie()를 이용해서 만들 수 있으며 리스트 한개만 넘겨주면 걔네의 비율을 계산해서 한개의 동그라미 차트로 보여준다. 근데 이렇게 하면 차트가 왠지 타원으로 나온다고?? plt.axis('equal')을 통해 원형으로 만들어 줄 수 있다. 
+
+-파이 차트에서는 라벨링을 두가지 방법으로 할 수 있다. 각각의 조각에 이름이 각각 붙거나, 하나의 범례가 차트옆에 위치하게 하는 경우.
+첫번째는 plt.pie()안에 labels 키워트를 넣어주면 된다. 리스트를 아규먼트로 받는다. 두번째는 plt.legend()로 할 수 있으며 똑같이 리스트를 받는다. 
+
+-plt.pie()에 autopct(오토퍼센트) 키워드를 통해 각 슬라이스들의 퍼센트를 표기할 수 있다. 아규먼트를 입력할 때는 세가지 입력방식이 있는데, 
+'%0.2f' 는 4.84 처럼 소수점 두자리까지 표시한다.
+'%0.2f%%' 는 4.84% 처럼 뒤에 퍼센트가 붙는 표기
+'%d%%' 는 정수로 round 되며 뒤에 5% 처럼 뒤에 퍼센트가 붙는다. 
+
+
+히스토그램(histogram)
+-히스토그램은 각 bin의 범위 안에 element들이 얼마나 속하는지 표시 해준다. numpy에서 다뤘었던 내용이다. 이건 plt.hist()로 나타낼 수 있다. 아무것도 설정하지 않고 data만 넣으면 10개의 bin으로 자동으로 나눠진다. bin의 개수를 직접 설정하고 싶으면 bins 키워드를 사용하면 된다. range 키워드는 plot 할 minimum, maximum 벨류 값을 설정한다. 
+
+-히스토그램은 전체 데이터의 분포도를 살펴보는 데에 유용하다. 어디가 피크인지, 한쪽으로 치우져있는지(skew) 등 
+
+-두개의 데이터를 한 히스토그램에 나타내고 싶은 경우, 겹치는 부분이 애매하다. 겹치는 부분에서 뒤쪽의 데이터를 읽을 수 없기 때문. 두가지 방법이 있는데, 첫번째는 투명도를 조절하는 것이고 두번째는 히스토그램을 fill 하지 말고 윤곽선으로 표현하는 방법이다. 투명도의 경우 plt.hist() 안에 alpha 키워드를 통해 조절할 수 있고(각각의 hist에서 alpha 를 따로 설정해줘야 한다) 아니면 plt.hist() 안에 histtype을 'step'으로 설정해서 윤곽선타입으로 바꿀 수 있다. 이것도 각각 해줘야함. 
+
+-두 데이터셋의 크기가 너무 차이나서 같은 그래프 안에 두면 한쪽이 너무 작아져서 그래프를 읽기 힘든 경우가 있다. 이런 경우 plt.hist()에 normed=True 를 넣어주면 그래프 y축이 양이 아니라 비율로 바뀌어서 두 그래프의 비율분포를 제대로 비교할 수 있다. 반대로 말하면 이 경우 얘네 둘의 사이즈 크기의 차는 알 수 없게 되므로 유의. normed 는 normalization 이라는 뜻인 것 같다. 근데 보통 히스토그램은 패턴(분포)의 비교용이라서 size에는 신경쓰지 않는 듯 하다. 
+ 
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,128 @@
+- 기본 코드
+df = pd.DataFrame()
+
+-dictionary를 입력하면 자동으로 key는 컬럼으로, values는 cell로 들어간다.
+
+-list를 입력하면 cell로 들어가며 columns 키워드에 list 형식으로 컬럼 이름을 넣어줘야한다.
+
+-csv 파일을 불러올 때 pd.read_csv, csv로 저장할 때 pd.to_csv 사용
+
+-컬럼 선택은 df['컬럼이름'] 혹은 df.컬럼이름 으로 선택할 수 있다.
+
+-여러 컬럼 선택은 더블 브라켓
+
+row selection 
+-불린 조건으로 가능 df[df.month == 'May']
+-and or 사용가능 or은 | and는 & or/and 양쪽의 불린 조건은 ()로 묶어줘야함
+-isin 메소드로 한번에 해결할 수도 있음 df.column_name.isin(list) 는 컬럼의 이름이 리스트 안에 들어가 있으면 선택
+-row를 선택할 때 당연히 index 가 비연속적일 수 있다. 이러면 차후에 iloc()을 사용하기 어려워지므로 (loc 아닌가?) .reset_index()를 통해 다시 인덱스를 연속적으로 쓸 수 있다. 그리고 예전 인덱스는 없어지지 않고 컬럼으로 옮겨간다. 기존 인덱스를 가지고 있기싫으면 .reset_index(drop=True) 키워드를 넣어주면 된다. 그리고 이 메소드는 새로운 데이터프레임을 만들어내며 inplace = True 키워드를 사용하면 새로운 데이터프레임 생성 없이 기존의 데이터프레임을 업데이트 할 수 있다. inplace를 사용할 때는 새로운 variable에 적용하거나 기존의 variable = 해서 업데이트 하려고 하면 에러가 난다. 그냥 메소드만 실행하면 된다. 
+
+adding column
+-별다른 명령어 없이 df['새로운 컬럼 이름'] = 갯수가 맞는 리스트 로 바로 추가가능하다. 모든 row에 전부 같은 value를 넣을 컬럼이면 리스트 형식이 아니라 그냥 입력해도 됨(boolean, 'str' 등으로) ***새로운 컬럼을 추가할 때는 df.컬럼이름 으로는 안되고 대괄호 안에 넣어야만 한다!!! 
+-같은 형식의 코드로 이미 있는 컬럼을 업데이트 할 수도 있다. 기존의 컬럼을 활용할 때는 기본 연산을 사용할 수 있으며 더 복잡한 함수는 .apply() 메소드로 가능하다.
+
+lambda function
+-람다 펑션은 한줄의 코드로 펑션을 define하는 방법이다. 인테저 말고 다른 타입의 데이터에도 적용가능하다.
+-mylambda = lambda x: (x * 2) +3
+print(mylambda(5)) 
+13이 출력됨. 
+stringlambda = lambda x: x.lower()
+print(stringlambda("Oh Hi Mark!"))
+스트링에도 적용됨
+
+-람다펑션은 if문을 짧게 바꾸는 데에도 유용하게 쓰이는데 형식은 다음과 같다. lambda x: [OUTCOME IF TRUE] if [CONDITIONAL] else [OUTCOME IF FALSE]
+예를 들어
+def myfunction(x):
+    if x > 40:
+        return 40 + (x - 40) * 1.50
+    else:
+        return x
+를 
+myfunction = lambda x: 40 + (x - 40) * 1.50 if x > 40 else x
+로 쓸 수 있다. 
+
+-판다스에서는 컬럼에 복잡한 오퍼레이션을 가할 때 람다펑션을 사용한다. 
+df['Email Provider'] = df.Email.apply(
+    lambda x: x.split('@')[-1]
+    )
+요런식으로 이메일에서 도메인만 빼올 수 있다. 
+다만
+get_last_name = lambda x: x.split()[-1]
+df.last_name = get_last_name(df.name) 식으로 쓰면 오류가 난다. df.name은 series 형식이고 series에는 split이 없기 때문. 반드시 apply 메소드를 이용해주기 
+
+-row['column'] 혹은 row.cloumn 을 하면 해당 행 해당 열에 해당하는 딱 한개의 value만 부를 수 있다. 근데 for문을 안돌려도 됨
+예를 들어
+df['Price with Tax'] = df.apply(lambda row:
+     row['Price'] * 1.075
+     if row['Is taxed?'] == 'Yes'
+     else row['Price'],
+     axis=1
+)
+택스가 yes인 항목에 대해서만 price * 1.075 를 적용하려는 함수인데 인덱스 차례대로 for 문을 돌린다는 표시가 없어도 알아서 해준다. row는 다른 이름으로 바꾸면 안됨. 특정 한 컬럼만 관여하는게 아니기 때문에 apply앞에 컬럼 이름이 없는 걸 볼 수 있다. 컬럼이 없는 대신 컬럼 방향으로 함수를 쓰겠다는 axis = 1 을 꼭꼭 넣어줘야한다.!
+
+df.columns = [] 로 기존의 컬럼들 이름을 한꺼번에 바꿔줄 수 있다. 개별적으로 바꾸려면 .rename 메소드를 사용한다. 
+{'old_column_name1': 'new_column_name1', 'old_column_name2': 'new_column_name2'} 형식이며 밑의 예제 참고.
+df = pd.DataFrame({
+    'name': ['John', 'Jane', 'Sue', 'Fred'],
+    'age': [23, 29, 21, 18]
+})
+df.rename(columns={
+    'name': 'First Name',
+    'age': 'Age'},
+    inplace=True)
+
+inplace=True 를 안넣으면 오리지널을 수정하는 대신 새로운 데이터프레임을 만든다. inplace를 안쓰더라도 df = df.rename() 식으로 하면 기존 데이터프레임이 업데이트 된다. 
+
+
+aggregation
+-가장 기본적인 코드는 df.column_name.command()
+-command 에는 mean, median, max, min, count, nunique(num of unique values), unique(list of unique values), std(standard deviation) 등이 사용가능하다. *빈칸은 count로 하지 않는다. count(null) 이런 식으로 해도 제대로 안 돌아감. row selection으로 isnull()을 써줘야함 갯수를 알고 싶으면 len으로 씌우기
+-특정 컬럼에서 반복되는 value에 대해서 루프를 돌리는 대신 groupby를 사용할 수 있다. SQL과 같음 그럴땐 df 뒤 column 앞에 groupby('컬럼이름')를 넣어준다. df.groupby('column1').column2.measurement() -> 결과는 Series 형식으로 나온다.
+-df.groupby('column1').column2.measurement().reset_index 뒤에 리셋인덱스를 붙여주면 인덱스로 있던 컬럼1도 새 컬럼으로 들어가고 인덱스는 0,1,2...로 바뀐다. 컬럼이 두 개가 되므로 형식도 데이터프레임으로 바뀐다. 
+-평균이나 카운트 보다 복잡한 퍼센트같은 경우 앞에서 배운 apply 메소드를 통해 함수를 만들어줘야한다. 람다 펑션의 인풋(x자리)는 항상 value의 list여야한다는 걸 염두에 두기
+
+-람다 함수에서 언제 x와 row를 넣는건지 확실하게 구분이 잘 되지 않는다. 
+cheap_shoes = orders.groupby('shoe_color').price.apply(lambda x: np.percentile(x, 25)).reset_index()
+와
+cheap_shoes = orders.groupby('shoe_color').apply(lambda row: np.percentile(row.price, 25)).reset_index()
+랑 결과가 똑같아야 하는거 아닌감? 
+아, 돌려보니 둘 다 에러는 안나고 다만 두번째 컬럼의 이름이 달라진다. 첫번째 코드는 price 라는 컬럼 이름을 그대로 가져오지만 두번째는 0으로 뜬다.
+-여러개의 컬럼으로 groupby 할 수 있다. 다만 여러개의 컬럼은 꼭 []로 묶어줘야하고 groupby 괄호 안에서도 마찬가지다
+
+pivot table
+-컬럼과 인덱스를 바꾸는 등 테이블의 데이터를 수정하기보다는 테이블구조를 reorganize 하는 것을 pivoting한다고 한다.
+기본 형식은 다음과 같다.
+df.pivot(columns='ColumnToPivot',
+         index='ColumnToBeRows',
+         values='ColumnToBeValues')
+그리고 마찬가지로 맨 끝에 .reset_index()를 추가할 수 있다. reset_index() 하면 내가 지정한 인덱스 앞에 0,1,2,3이 붙는다.
+
+
+Multiple DataFrames
+이커머스 사이트를 운영해서 정보를 DF형식으로 만든다고 해보자. 필요한 정보는 고객이름, 고객주소, 고객번호, 제품아이디, 제품가격 등일 것이다. 근데 이걸 한 테이블에 저장한다고 생각하면 한 고객이 여러 제품을 주문할 경우 같은 고객이름이 여러번 반복될 것이다. 제품 가격이나 설명도 마찬가지. 이러면 불필요한 데이터가 많아지고 데이터 양이 커질때를 생각하면 굉장히 비효율 적이다. 그래서 데이터 프레임을 여러개 만들 필요성이 생긴다. 
+SQL에서도 이런 내용을 다뤘었다. customer_id 등 겹치는 컬럼을 두고 여러 테이블을 연결하는 것!
+
+-기본적으로 pd.merge(df1, df2)를 통해 두개의 테이블을 하나로 만들 수 있다. 공통된 컬럼을 찾아서 그걸 기준으로 나머지 컬럼들을 합쳐준다. 세 개는 불가능함(세개의 테이블이 한 개의 공통된 컬럼을 가지고 있다 하더라도)
+
+-위의 한계 때문에 df1.merge(df2) 를 사용한다. 뒤에 붙여서 추가적인 프로세스가 가능하기 때문. df1.merge(df2).merge(df3) 로 세개의 테이블을 합칠 수 있다. 
+
+-같은 컬럼이라도 각각의 테이블에서 컬럼 이름이 다를 수 있다. 간단한 문제일 때는 rename으로 한쪽의 컬럼 이름을 바꿔주면 된다. orders_products = pd.merge(orders, products.rename(columns={'id':'product_id'}))
+-rename말고 left_on, right_on을 이용할 수도 있다. 
+orders_products = pd.merge(orders, products, left_on = 'product_id', right_on = 'id', suffixes=['_orders','_products'])
+왼쪽 테이블(첫번째 테이블)에서 합칠 컬럼의 이름을 left_on 에, 두번째 테이블의 컬럼 이름을 right_on에 넣는다. 이러면 합쳐질 때 컬럼 이름이 중복되는 경우가 있는데(두번째 테이블의 id 컬럼을 가지고 올건데 첫번째 테이블에 이미 id라는 컬럼이 있는 경우) 이러면 판다스가 자기 맘대로 id_x, id_y같이 구별해서 이름을 변경해버린다(판다스는 컬럼 이름이 중복되는 걸 허용하지 않는다고 함) 그래서 이런 경우 뒤에 suffixes 라는 키워드를 같이 붙인다. 그러면 원래 있던 id(얘는 merge에 사용하는 컬럼이 아님)뒤에는 _orders를 붙이고 두번째 테이블의 id에는 _product 를 붙여서 이름을 수정한다. 라고 알려주는 것. 물론 suffixes는 없어도 에러는 안난다. 근데 이렇게 하니까 merge할 컬럼 두개가 안 합쳐지고 둘 다 들어가버리는데...(같은 value를 가진 채로) 이건 굉장히 비효율적인 것 같은데?
+
+-pd.merge를 통해 합칠 때 한쪽에 없는 value가 있으면 그 행이 아예 삭제되어 버린다. 예를 들어 orders 테이블에는 product_id가 5까지 있는데 product 테이블에는 product_id 가 4까지 밖에 없다면 orders에서 product_id 5 value를 가진 행은 아예 없어져버림;_; 이렇게 unmatched row를 제외시켜버리는 merge type 을 inner merge라고 한다. unmatched row의 정보를 보존하고 싶을 때 outer merge를 사용할 수 있다. 
+
+-outer merge를 쓰고 싶을 때는 merge 시에 how 키워드에 'outer'을 넣어준다. 이러면 나머지 missing value는 None 혹은 nan으로 채워진다. 
+
+-inner 과 outer 의 중간(?) 단계로 left merge와 right merge가 있다. left merge는 왼쪽, 즉 첫번째 테이블을 기준으로 하는 것으로, left의 모든 행은 다 살리고, 만약 left에는 없고 right에는 있는 행이 있으면 걔는 안가져온다. (outer 였으면 left에 nan으로 채워졌을 행들) right는 그 반대로. how 키워드에 'left' 와 'right'를 입력해주면 된다. 
+
+-완전히 같은 컬럼들을 가지고 있고 value 값이 다른 테이블들을 합치고 싶을 때는 pd.concat([])을 이용한다. 유의할 점은 merge와 다르게 데이터테이블들을 대괄호로 감싸줘야 한다는 것. 왜 그런지는 모르겠당
+
+
+
+
+
+
+
+
